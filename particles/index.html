@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>BuzzerB — Three Particle Transformations</title>
+  <style>
+    :root{color-scheme:dark;font-family:Inter,ui-sans-serif,system-ui,sans-serif;color:#eff3fa;background:#080b13}
+    *{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 15% 0,#17223e 0,transparent 55%),#080b13}
+    main{max-width:1200px;margin:auto;padding:7vh 5vw}header{max-width:780px}.eyebrow{color:#aabbd5;font-size:12px;letter-spacing:.2em;text-transform:uppercase}
+    h1{font-size:clamp(36px,5vw,68px);line-height:1.02;letter-spacing:-.045em;margin:22px 0}p{color:#abb6c9;line-height:1.7}.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin:40px 0}
+    .card{position:relative;display:flex;flex-direction:column;overflow:hidden;min-height:350px;padding:28px;border:1px solid #ffffff1b;border-radius:18px;background:linear-gradient(145deg,#ffffff09,#ffffff02);text-decoration:none;color:inherit;transition:transform .2s,border-color .2s}
+    .card:hover{transform:translateY(-5px);border-color:var(--accent)}.card:focus-visible{outline:3px solid var(--accent);outline-offset:5px}.number{color:var(--accent);font-size:12px;letter-spacing:.15em}h2{font-size:27px;letter-spacing:-.03em;margin:20px 0 8px}.card p{margin:10px 0 30px}.open{margin-top:auto;color:var(--accent);font-size:14px;font-weight:650}.art{height:75px;display:flex;align-items:center;justify-content:center;margin-top:20px;opacity:.8}.art img{height:65px;filter:none}.relief img{transform:none;filter:none}.vortex img{background:transparent;padding:5px;border-radius:50%}footer{display:flex;gap:24px;justify-content:space-between;font-size:12px;color:#7f8ca3;line-height:1.6}footer a{color:#aabbd5}
+    @media(max-width:800px){.cards{grid-template-columns:1fr}.card{min-height:260px}footer{flex-direction:column;gap:10px}.art{position:absolute;right:25px;top:12px}.card p{max-width:85%}}
+    @media(prefers-reduced-motion:reduce){.card{transition:none}.card:hover{transform:none}}
+  </style>
+<link rel="stylesheet" href="../motion-studies.css">
+</head>
+<body data-motion-study="particles">
+<nav class="motion-studies-nav" aria-label="BuzzerB motion studies">
+  <span class="motion-studies-label">Motion Studies</span>
+    <a href="../">Animation with Fingers</a>
+    <a href="../time-sculpting/">Time Sculpting</a>
+    <a href="../particles/" aria-current="page">Particle Transformation</a>
+</nav>
+<main>
+  <header><div class="eyebrow">BuzzerB / Particle studies</div><h1>One character.<br>Three transformations.</h1><p>Compare three ways to turn an animated character into the CBS eye. Open a study, choose a character animation, and start its reveal. Each version has its own timeline and interaction.</p></header>
+  <div class="cards">
+    <a class="card" style="--accent:#ffffff" href="./planar/index.html?v=cbs-white-2"><div class="number">01 / PLANAR</div><div class="art"><img src="./planar/assets/cbs-eye-reference.svg" alt=""></div><h2>Living constellation</h2><p>A colored swarm leaves BuzzerB, gathers into a crisp CBS eye, and returns to the character.</p><div class="open">Open planar study ↗</div></a>
+    <a class="card" style="--accent:#ffffff" href="./sculptural/index.html?v=cbs-white-2"><div class="number">02 / SCULPTURAL</div><div class="art relief"><img src="./sculptural/assets/cbs-eye-reference.svg" alt=""></div><h2>Emblem in relief</h2><p>Dense white tiles build a dimensional relief, then fuse into the precise official CBS mark.</p><div class="open">Open sculptural study ↗</div></a>
+    <a class="card" style="--accent:#ffffff" href="./vortex/index.html?v=smooth-particles-4"><div class="number">03 / VORTEX</div><div class="art vortex"><img src="./vortex/assets/cbs-eye-reference.svg" alt=""></div><h2>Shape from the storm</h2><p>One continuous swarm flows from BuzzerB into the precise official white CBS eye, then returns.</p><div class="open">Open vortex study ↗</div></a>
+  </div>
+  <footer><span>Three interactive studies · BuzzerB Motion Studies</span><span>CBS eye reference sourced from CBS’s website; final artwork approval pending.<br><a href="./planar/assets/cbs-logo-provenance.json">Artwork provenance</a></span></footer>
+</main>
+</body>
+</html>

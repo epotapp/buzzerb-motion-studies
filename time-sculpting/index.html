@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="BuzzerB. Pause a kick, explore its frozen moments, and release it back into motion.">
+<title>BuzzerB — Gather. Strike.</title>
+<link rel="stylesheet" href="gallery.css">
+<link rel="stylesheet" href="../motion-studies.css">
+</head>
+<body data-motion-study="time">
+<nav class="motion-studies-nav" aria-label="BuzzerB motion studies">
+  <span class="motion-studies-label">Motion Studies</span>
+    <a href="../">Animation with Fingers</a>
+    <a href="../time-sculpting/" aria-current="page">Time Sculpting</a>
+    <a href="../particles/">Particle Transformation</a>
+</nav>
+<div class="gallery-app">
+<header><a class="brand" href="./">BUZZERB<span>Motion studies</span></a><nav><a href="../">Playground ↗</a><button id="copyMoment">Copy this moment</button><button id="sound" aria-pressed="false">Sound off</button><button id="fullscreen" aria-label="Enter fullscreen">⤢</button></nav></header>
+<main>
+<section id="stage" class="stage" tabindex="0" aria-label="Slow-motion Kick. Drag to orbit. Space pauses, F holds, R replays and Enter gathers the silhouettes at the apex.">
+<canvas id="gl" aria-label="BuzzerB performing a kick with three-dimensional time echoes"></canvas>
+<div class="title-block"><p class="eyebrow">01 / Slow motion into impact</p><h1>Gather.<br><em>Strike.</em></h1><p class="stage-description" id="chapterNote">Five moments of one kick, concentrated into a single impact.</p></div>
+<div class="vertical-label" aria-hidden="true">BUZZERB — TEMPORAL SCULPTURE</div>
+<div class="stage-tools"><button id="camera" aria-pressed="true">Director view</button><button id="overview" aria-pressed="true">Silhouettes on</button></div>
+<div class="moment-label"><span id="stageMode">Slow kick / playing</span><span id="poseTime">0.000 / 1.63 s</span></div>
+<div class="stage-hint" id="stageHint">Drag to look around · scroll to move closer</div>
+<div class="camera-fade" id="cameraFade" aria-hidden="true"></div>
+<div class="loading" id="loading" role="status">Preparing the study…</div><div class="loading error" id="error" role="alert" hidden></div>
+</section>
+<section class="controls" aria-label="Presentation controls">
+<div class="score-top"><div class="cue"><span id="chapterNumber">01 / 07</span><h2 id="chapterTitle" aria-live="polite">Every moment of the ascent</h2></div><div class="play-actions"><button class="primary" id="start">Replay the kick <span>↗</span></button><button id="pause" class="round" aria-label="Pause playback">Ⅱ</button><button id="restart" class="round" aria-label="Restart sequence">↺</button></div></div>
+<div class="score-row"><span class="show-time"><output id="showTime">00.00</output> <span>/ 24 s</span></span><div class="score"><label class="sr-only" for="showScrub">Sequence time</label><input id="showScrub" type="range" min="0" max="24" step="0.01" value="0"><div id="chapters" class="chapters"></div></div></div>
+<div class="interaction"><div class="pose-slider"><label for="poseScrub">Kick pose <span>drag time ↔</span></label><input id="poseScrub" type="range" min="0" max="1.633333" step="0.001" value="0" aria-label="Animation time"></div><div class="sculpt-actions"><button id="freeze">Hold <kbd>F</kbd></button><button id="release" disabled>Gather + strike <kbd>↵</kbd></button></div><details><summary>Options</summary><div class="options"><label for="speed">Speed <output id="speedOut">1.00×</output></label><input id="speed" type="range" min="0.25" max="2" step="0.25" value="1"><label><input id="traces" type="checkbox" checked> Impact VFX</label><label><input id="reduced" type="checkbox"> Reduced camera motion</label></div></details></div>
+</section>
+</main>
+<footer><span>Five silhouettes. One powerful strike.</span><span>Slow ascent · gather · impact · fast return</span><output id="notice" role="status" aria-live="polite"></output></footer>
+</div>
+<dialog id="momentDialog"><form method="dialog"><div class="dialog-top"><span class="eyebrow">Feedback on this view</span><button aria-label="Close moment link">×</button></div><h2>This moment.</h2><p>Copy this link and paste it in the chat with your note. It remembers the time and your camera angle.</p><label for="momentURL">Moment link</label><input id="momentURL" readonly><div class="dialog-actions"><button id="copyLink" type="button" class="primary">Copy link</button><button>Done</button></div><output id="copyStatus" role="status"></output></form></dialog>
+<script type="importmap">{"imports":{"three":"./vendor/three/build/three.module.js","three/addons/":"./vendor/three/examples/jsm/"}}</script><script type="module" src="gallery.js"></script>
+</body></html>

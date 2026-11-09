@@ -1,0 +1,94 @@
+.motion-studies-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  min-width: 0;
+  margin: 0 auto 12px;
+  padding: 4px 8px;
+  border-radius: 8px;
+  background: #171b23;
+  color: #f1f3f7;
+  font: 600 13px/1.2 system-ui, sans-serif;
+}
+
+.motion-studies-label {
+  margin: 0 15px 0 8px;
+  color: #aeb9cc;
+  font: 11px/1.2 ui-monospace, monospace;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.motion-studies-nav a {
+  display: grid;
+  place-items: center;
+  min-height: 36px;
+  padding: 6px 12px;
+  border-radius: 5px;
+  color: inherit;
+  text-align: center;
+  text-decoration: none;
+}
+
+.motion-studies-nav a:hover,
+.motion-studies-nav a:focus-visible {
+  color: #fff;
+  background: #303a4b;
+}
+
+.motion-studies-nav a:focus-visible {
+  outline: 2px solid #f6c32e;
+  outline-offset: -2px;
+}
+
+.motion-studies-nav a[aria-current] {
+  background: #f6c32e;
+  color: #1b1400;
+}
+
+[data-motion-study] > .motion-studies-nav {
+  width: 100%;
+  max-width: 1780px;
+}
+
+[data-motion-study="time"] > .motion-studies-nav {
+  width: calc(100% - 32px);
+  margin-top: 10px;
+  margin-bottom: 0;
+}
+
+[data-motion-study="time"] .gallery-app {
+  min-height: calc(100svh - 54px);
+}
+
+@media (min-width: 901px) {
+  [data-motion-study]:has(> .app) {
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr);
+  }
+
+  [data-motion-study] > .app {
+    width: 100%;
+  }
+
+  [data-motion-study="time"] .stage:not(:fullscreen) {
+    height: max(420px, calc(100svh - 346px));
+  }
+}
+
+@media (max-width: 560px) {
+  [data-motion-study] > .motion-studies-nav {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    font-size: 11px;
+  }
+
+  .motion-studies-label {
+    display: none;
+  }
+
+  .motion-studies-nav a {
+    padding-inline: 4px;
+  }
+}

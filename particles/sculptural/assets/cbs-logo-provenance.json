@@ -1,0 +1,11 @@
+{
+  "name": "CBS eye component",
+  "status": "Official website reference; eye-alone working assumption; final branding approval pending",
+  "sourcePage": "https://www.cbs.com/",
+  "sourceUrl": "https://wwwimage-tve.cbsstatic.com/assets/build/css/pages/homepage-66f02f27fec922aaf09c.min.css",
+  "retrievedUtc": "2026-11-07T20:48:21.070Z",
+  "sourceSvgSha256": "cca407dcea1292668b1c1da7ecb24432cba8a9f0ef3eb9daf8820e742fab004a",
+  "eyeSvgSha256": "076732117f6e1aead30f0ba2213d173f344fe9245eb3709773f21cf1d75b78b9",
+  "extraction": "Decoded .icon.siteLogo embedded SVG (85x24 CBS lockup). Kept exact eye path commands before M26.681 12, where the CBS wordmark begins. Set viewBox to eye component bounds 0 0 24.5 24; no path reconstruction or AI generation.",
+  "rights": "CBS mark remains its owner’s trademark; public accessibility is not a license grant. Used here as a replaceable reference in local requested prototypes."
+}

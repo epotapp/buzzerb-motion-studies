@@ -1,0 +1,327 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>BuzzerB — Vortex / CBS Eye Study</title>
+<meta name="description" content="BuzzerB becomes a swirling current, resolves into the exact official white CBS eye on black, and returns. An interactive 14.3-second motion study.">
+<style>
+/* Layout: full-height workbench. 3D stage on the left, control board on the right; stacks on phones. */
+:root {
+  --bg: #e8ebf0;
+  --panel: #f5f6f8;
+  --stage-hi: #fbfbfc;
+  --stage-lo: #d5dae3;
+  --fg: #151a22;
+  --mute: #566071;
+  --line: #c8cfda;
+  --accent: #f0b410;
+  --accent-ink: #1b1400;
+  --alert: #d63a33;
+  --ring: #aab3c2;
+  --f-display: "Bricolage Grotesque", "Trebuchet MS", system-ui, sans-serif;
+  --f-body: "Instrument Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0f1218; --panel: #171b23; --stage-hi: #262c38; --stage-lo: #11141a;
+    --fg: #eceff5; --mute: #98a2b3; --line: #2a313d; --accent: #f6c32e; --accent-ink: #1b1400;
+    --alert: #ff6a61; --ring: #3a4352; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0f1218; --panel: #171b23; --stage-hi: #262c38; --stage-lo: #11141a;
+  --fg: #eceff5; --mute: #98a2b3; --line: #2a313d; --accent: #f6c32e; --accent-ink: #1b1400;
+  --alert: #ff6a61; --ring: #3a4352; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body {
+  background: var(--bg); color: var(--fg); font-family: var(--f-body); font-size: 14px; line-height: 1.45;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 14px;
+}
+button, input { font: inherit; color: inherit; }
+button:focus-visible, input:focus-visible, label:focus-within { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.app { height: 100%; display: grid; grid-template-rows: auto minmax(0, 1fr); gap: 12px; max-width: 1500px; margin: 0 auto; }
+header { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+h1 { margin: 0; font: 800 22px/1 var(--f-display); letter-spacing: -0.02em; }
+h1 span { font-weight: 600; color: var(--mute); }
+.rigline { font: 400 12px var(--f-mono); color: var(--mute); }
+
+main { display: grid; grid-template-columns: minmax(0, 1fr) 350px; gap: 12px; min-height: 0; }
+
+/* stage */
+.stage { position: relative; min-height: 0; border: 1px solid var(--line); border-radius: 6px; overflow: hidden;
+  background: radial-gradient(ellipse 75% 70% at 50% 78%, var(--stage-hi), var(--stage-lo)); display: grid; grid-template-rows: minmax(0, 1fr) auto; }
+.viewport { position: relative; min-height: 0; }
+#gl { position: absolute; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; }
+.now { position: absolute; left: 14px; top: 12px; right: 14px; display: flex; align-items: baseline; gap: 10px; pointer-events: none; }
+.now b { font: 800 clamp(20px, 3.2vw, 30px)/1 var(--f-display); letter-spacing: -0.02em; }
+.now small { font: 400 12px var(--f-mono); color: var(--mute); }
+.hint { position: absolute; right: 14px; bottom: 10px; font: 400 11px var(--f-mono); color: var(--mute); pointer-events: none; }
+.camera-readout { position: absolute; left: 14px; bottom: 34px; font: 500 11px var(--f-mono); color: var(--mute); pointer-events: none; }
+.loading { position: absolute; inset: 0; display: grid; place-items: center; font: 500 13px var(--f-mono); color: var(--mute); }
+
+.transport { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 18px; padding: 10px 14px; background: var(--panel); border-top: 1px solid var(--line); }
+.tbtn { min-width: 72px; height: 32px; padding: 0 12px; border: 1px solid var(--line); background: var(--bg); border-radius: 4px; cursor: pointer; font-weight: 600; }
+.tbtn:hover { border-color: var(--mute); }
+.scrub { flex: 1 1 220px; min-width: 0; display: flex; align-items: center; gap: 10px; font: 400 12px var(--f-mono); color: var(--mute); }
+.scrub input { flex: 1; min-width: 0; }
+.opt { display: flex; align-items: center; gap: 8px; font-size: 12.5px; color: var(--mute); }
+.opt input[type="range"] { width: 92px; }
+.opt output { font: 400 12px var(--f-mono); min-width: 3.4em; color: var(--fg); }
+.chk { display: flex; align-items: center; gap: 6px; font-size: 12.5px; color: var(--mute); cursor: pointer; }
+input[type="range"], input[type="checkbox"] { accent-color: var(--accent); }
+
+/* control board */
+.board { min-height: 0; overflow-y: auto; border: 1px solid var(--line); border-radius: 6px; background: var(--panel); padding: 14px; display: flex; flex-direction: column; gap: 18px; }
+.sec h2 { margin: 0 0 8px; font: 600 11px var(--f-mono); letter-spacing: 0.09em; text-transform: uppercase; color: var(--mute); display: flex; justify-content: space-between; }
+.camera-state { display: inline-flex; align-items: center; gap: 5px; letter-spacing: 0; text-transform: none; }
+.camera-state::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: var(--mute); }
+.camera-state[data-active="true"]::before { background: var(--accent); }
+.camera-moves { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+.camera-move { display: grid; justify-items: center; gap: 7px; padding: 10px 3px 8px; border: 1px solid var(--line); border-radius: 4px; background: var(--bg); cursor: pointer; font-size: 12px; font-weight: 600; }
+.camera-move:hover { border-color: var(--mute); }
+.camera-move[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.camera-move svg { width: 30px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+.camera-cycle { margin-top: 12px; }
+.camera-cycle input[type="range"] { flex: 1; min-width: 0; }
+.camera-cycle input:disabled { opacity: .4; }
+.camera-note { margin: 8px 0 0; min-height: 2.9em; color: var(--mute); font-size: 12px; }
+.grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
+.clip { position: relative; text-align: left; min-width: 0; padding: 9px 10px 11px; border: 1px solid var(--line); background: var(--bg); border-radius: 4px; cursor: pointer; overflow: hidden;
+  display: grid; gap: 2px; --p: 0%; }
+.clip:hover { border-color: var(--mute); }
+.clip .t { font: 600 14px/1.15 var(--f-display); overflow-wrap: anywhere; padding-right: 14px; }
+.clip .m { font: 400 11px var(--f-mono); color: var(--mute); }
+.clip .k { position: absolute; top: 7px; right: 8px; font: 500 10px var(--f-mono); color: var(--mute); }
+.clip::after { content: ""; position: absolute; left: 0; bottom: 0; height: 3px; width: var(--p); background: var(--accent-ink); opacity: 0; }
+.clip[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.clip[aria-pressed="true"] .m, .clip[aria-pressed="true"] .k { color: var(--accent-ink); opacity: .75; }
+.clip[aria-pressed="true"]::after { opacity: .85; }
+
+.grp { grid-column: 1 / -1; margin-top: 6px; font: 500 10.5px var(--f-mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--mute); display: flex; align-items: center; gap: 8px; }
+.grp:first-child { margin-top: 0; }
+.grp::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+.seg { display: flex; margin-bottom: 8px; border: 1px solid var(--line); border-radius: 4px; overflow: hidden; background: var(--bg); }
+.seg label { flex: 1; position: relative; }
+.seg input { position: absolute; opacity: 0; inset: 0; cursor: pointer; }
+.seg span { display: block; text-align: center; padding: 6px 4px; font-weight: 600; font-size: 12.5px; color: var(--mute); }
+.seg input:checked + span { background: var(--accent); color: var(--accent-ink); }
+.seg input:focus-visible + span { outline: 2px solid var(--fg); outline-offset: -3px; }
+.pose { padding: 8px 10px; }
+.pose .t { padding-right: 0; font-size: 13.5px; }
+.drop { display: grid; gap: 4px; padding: 14px; border: 1.5px dashed var(--mute); border-radius: 4px; cursor: pointer; background: var(--bg); }
+.drop:hover, .drop.over { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 14%, var(--bg)); }
+.drop b { font: 600 14px var(--f-display); }
+.drop span { font-size: 12.5px; color: var(--mute); }
+.msg { min-height: 1.4em; margin-top: 8px; font: 400 12px var(--f-mono); color: var(--mute); overflow-wrap: anywhere; }
+.msg.err { color: var(--alert); }
+.recipe { margin: 10px 0 0; padding: 0; list-style: none; font-size: 12.5px; color: var(--mute); display: grid; gap: 3px; }
+.recipe li::before { content: "› "; color: var(--accent); font-weight: 700; }
+.fullover { position: fixed; inset: 0; z-index: 20; display: none; place-items: center; background: color-mix(in srgb, var(--bg) 82%, transparent); font: 800 28px var(--f-display); border: 3px dashed var(--accent); }
+.fullover.on { display: grid; }
+
+@media (max-width: 860px) {
+  html, body { height: auto; }
+  .app { height: auto; }
+  main { grid-template-columns: minmax(0, 1fr); }
+  .stage { height: min(64vh, 520px); }
+  .hint { display: none; }
+  .board { overflow: visible; }
+}
+</style>
+<style>
+:root, :root[data-theme="dark"], :root:not([data-theme="light"]) {
+ --bg:#071111; --panel:#0e1c1c; --stage-hi:#16312c; --stage-lo:#061011;
+ --fg:#edf6ef; --mute:#97aaa5; --line:#294039; --accent:#b9f9d9; --accent-ink:#10291f; --ring:#25473c; color-scheme:dark;
+ --f-display:"Arial",sans-serif; --f-body:"Segoe UI",system-ui,sans-serif; --f-mono:Consolas,monospace;
+}
+body { padding:24px 28px; background:radial-gradient(ellipse at 80% 0%,#162622,transparent 55%),#071111; }
+.app { max-width:1800px; gap:20px; }
+header { align-items:center; }
+h1 { font:500 17px/1.2 var(--f-body); letter-spacing:-.4px; }
+h1 strong { font-weight:750; } h1 span { font-weight:400; color:var(--mute); margin-left:8px; }
+.edition { font:10px var(--f-mono); letter-spacing:.12em; color:#b9f9d9; display:flex; align-items:center; gap:14px; }
+.edition i { width:6px;height:6px;background:#c7ffbc;border-radius:50%;box-shadow:0 0 14px #98ffb7; }
+main { grid-template-columns:minmax(0,1fr) 290px;gap:20px; }
+.stage { border-radius:16px; border-color:#30483e; background:radial-gradient(ellipse 60% 60% at 50% 48%,#16312c 0%,#071413 65%,#050c0d 100%); box-shadow:0 22px 90px #0005; }
+.viewport::after { content:"";position:absolute;pointer-events:none;inset:0;border-radius:16px;background:none; }
+.now { left:25px; top:23px; gap:8px; flex-direction:column; }
+.now b { font:500 17px/1.1 var(--f-body); letter-spacing:-.3px; }
+.now small { font-size:10px;letter-spacing:.02em; }
+.stage-index { position:absolute;right:25px;top:22px;color:#95b2a5;font:10px var(--f-mono);letter-spacing:.13em; }
+.camera-readout { bottom:18px;left:25px;font-size:10px;color:#6e9285; }
+.hint { bottom:18px;right:25px;font-size:10px;color:#6e9285; }
+.transport { background:#0c1916;border-top-color:#213a2f;gap:9px 12px;padding:13px 20px; }
+.transport .opt { font-size:11px; } .transport .opt input { width:60px; }
+.transport .chk { font-size:11px; }
+.tbtn { background:#12251e;border-color:#2b4638;border-radius:7px;min-width:64px;font-size:11px;height:30px; }
+.scrub { flex-basis:170px;font-size:10px; }
+.board { border:0;border-radius:0;background:transparent;padding:0;gap:20px; }
+.intro { padding:6px 0 20px;border-bottom:1px solid var(--line); }
+.eyebrow { font:10px var(--f-mono);letter-spacing:.13em;text-transform:uppercase;color:#a3ccba; }
+.intro h2 { margin:14px 0 12px;font:400 33px/1.05 var(--f-body);letter-spacing:-1.4px; }
+.intro p { color:var(--mute);font-size:12px;line-height:1.65;margin:0; }
+.reveal-card { padding:17px;background:linear-gradient(130deg,#16342a,#0d211a);border:1px solid #41614c;border-radius:12px; }
+.phase-row { display:flex;align-items:center;justify-content:space-between;font:10px var(--f-mono);color:#9cc4ae; }
+.phase-dot { width:5px;height:5px;background:#c2f7bc;border-radius:50%; }
+#phaseName { display:block;min-height:40px;margin:14px 0 9px;font:500 19px/1.12 var(--f-body);letter-spacing:-.5px; }
+#revealStatus { font:10px var(--f-mono);color:#92b9a3;min-height:24px; }
+.reveal-primary { display:flex;gap:7px;margin:16px 0 14px; }
+.reveal-primary button { border-radius:7px;cursor:pointer;border:1px solid #4c765d;background:#1c382a;font-size:12px;padding:10px; }
+#reveal { flex:1;background:#c0f9ce;color:#0e2718;border-color:#c0f9ce;font-weight:650; }
+#reveal:hover { background:#e3ffe9; }
+#reverse[aria-pressed="true"] { color:#10291f;background:#c0f9ce; }
+.reveal-timeline { display:flex;align-items:center;gap:7px;font:10px var(--f-mono);color:#9fc9ad; }
+#revealScrub { min-width:0;flex:1;width:100%; }
+.sequence-progress { height:2px;background:#2b4b36;margin-top:15px;overflow:hidden; }
+#sequenceProgress { width:0%;height:100%;background:#c0f9ce; }
+.reveal-options { margin-top:12px;display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center; }
+.reveal-options label { font-size:10px;color:#a1bfa9;display:flex;gap:5px;align-items:center; }
+select { font:10px var(--f-mono);border:1px solid #476651;border-radius:4px;background:#10291d;color:#d9f4df;padding:4px;max-width:92px; }
+.text-button { font:10px var(--f-body);color:#bce5c8;border:0;background:none;padding:0;cursor:pointer;text-decoration:underline;text-underline-offset:3px; }
+.sequence-notes { display:grid;gap:7px;margin-top:15px; }
+.sequence-notes span { display:flex;justify-content:space-between;font:9px var(--f-mono);color:#748f7e; }
+.sequence-notes b { font-weight:400;color:#bdd7c5; }
+.library { border-top:1px solid var(--line);padding-top:14px; }
+.library summary { cursor:pointer;font-size:12px;font-weight:600; }
+.library summary small { color:#7f9d8a;font:10px var(--f-mono);margin-left:7px; }
+.library>.sec { margin-top:15px; }
+.sec h2 { font-size:9px;letter-spacing:.1em; }
+.camera-moves { gap:5px; }.camera-move { padding:7px 2px;font-size:10px;background:#10231b;border-radius:5px;gap:4px; }
+.camera-move svg { width:24px;height:17px; }
+.camera-cycle { font-size:10px; }.camera-note { font-size:10px;min-height:0; }
+.clip { background:#10231b;border-color:#2a4434;border-radius:6px;padding:8px; }
+.clip .t { font:500 11px var(--f-body); }.clip .m,.clip .k { font-size:8px; }
+.grp { font-size:8px; }.drop { padding:11px;border-color:#49634e;border-radius:7px; }.drop b { font:500 12px var(--f-body); }.drop span,.recipe { font-size:10px; }
+.msg { font-size:10px; }.recipe { gap:4px; }
+.source-note { font-size:10px;line-height:1.5;color:#637d6c;padding-bottom:12px; }.source-note a { color:#95b49d; }
+[data-reveal="true"] .transport { opacity:.65; } [data-reveal="true"] #nowMeta { color:#b8e8ca; }
+@media(max-width:1100px) { body { padding:16px; }main { grid-template-columns:minmax(0,1fr) 260px;gap:14px; }.intro h2 { font-size:29px; }.transport .opt { display:none; } }
+@media(max-width:860px) { main { grid-template-columns:1fr; }.stage { height:62vh;min-height:380px; }.board { display:grid;grid-template-columns:1fr 1fr;overflow:visible; }.intro { border:0;padding:0 10px 0 0; }.intro h2 { font-size:32px; }.library { grid-column:1/-1; }.source-note { grid-column:1/-1; }.app { height:auto; } }
+@media(max-width:560px) { body { padding:13px; }.edition { font-size:8px;gap:7px; }.edition .rigline { display:none; }h1 { font-size:14px; }h1 span { font-size:10px;margin-left:4px; }.stage { height:58vh;min-height:350px; }.now { left:17px;top:18px; }.stage-index { right:17px;top:18px; }.now small { font-size:8px; }.camera-readout { left:17px;bottom:12px;font-size:8px; }.board { grid-template-columns:1fr; }.intro h2 { font-size:30px; }.intro p { max-width:330px; }.intro { padding:8px 0; }.transport { padding:10px;gap:8px; }.transport .chk { display:none; }.transport #reset { display:none; }.reveal-card { padding:16px; } }
+@media(prefers-reduced-motion:reduce) { *,*::before,*::after { scroll-behavior:auto!important; } }
+</style>
+<style>
+  body { margin: 0; }
+  :root { padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+  [hidden] { display: none !important; }
+</style>
+<link rel="stylesheet" href="../../motion-studies.css">
+</head>
+<body data-motion-study="particles">
+<nav class="motion-studies-nav" aria-label="BuzzerB motion studies">
+  <span class="motion-studies-label">Motion Studies</span>
+    <a href="../../">Animation with Fingers</a>
+    <a href="../../time-sculpting/">Time Sculpting</a>
+    <a href="../../particles/" aria-current="location">Particle Transformation</a>
+</nav>
+<div class="app">
+  <header>
+    <h1><strong>BuzzerB</strong><span>Motion studies</span></h1>
+    <div class="edition"><i></i><span>03 / VORTEX</span><span class="rigline" id="rigline">INTERACTIVE IDENT</span></div>
+  </header>
+  <main>
+    <section class="stage" aria-label="3D stage">
+      <div class="viewport" id="viewport">
+        <canvas id="gl"></canvas>
+        <div class="now"><b id="nowTitle">Loading</b><small id="nowMeta"></small></div>
+        <div class="stage-index">CBS / EYE STUDY</div>
+        <div class="camera-readout" id="cameraReadout">Manual camera</div>
+        <div class="hint">move to steer the flow · drag to orbit</div>
+        <div class="loading" id="loading">Building rig…</div>
+      </div>
+      <div class="transport">
+        <button class="tbtn" id="pause" type="button">Pause</button>
+        <div class="scrub"><span id="tcur">0.00</span><input id="scrub" type="range" min="0" max="1000" value="0" aria-label="Scrub animation"><span id="tdur">0.00s</span></div>
+        <label class="opt" for="speed">Speed <input id="speed" type="range" min="0.2" max="2" step="0.05" value="1"><output id="speedOut" for="speed">1.00×</output></label>
+        <label class="opt" for="blend">Blend <input id="blend" type="range" min="0" max="1" step="0.05" value="0.3"><output id="blendOut" for="blend">0.30s</output></label>
+        <label class="chk" for="loop"><input id="loop" type="checkbox" checked> Loop</label>
+        <label class="chk" for="rigvis"><input id="rigvis" type="checkbox"> Show rig</label>
+        <button class="tbtn" id="reset" type="button">Reset view</button>
+      </div>
+    </section>
+
+    <aside class="board" aria-label="Animation control board">
+      <div class="intro">
+        <div class="eyebrow">Flow / exact CBS eye</div>
+        <h2>The eye of<br>the vortex.</h2>
+        <p>A character becomes a current. The current resolves into the original CBS eye, in white on black. Then everything finds its way home.</p>
+      </div>
+      <section class="reveal-card" aria-label="CBS vortex sequence">
+        <div class="phase-row"><span>MATTER → MARK → MATTER</span><i class="phase-dot"></i></div>
+        <b id="phaseName" aria-live="polite">Ready to release</b>
+        <div id="revealStatus">14.3 second sequence</div>
+        <div class="reveal-primary">
+          <button id="reveal" type="button">Reveal ↗</button>
+          <button id="revealPause" type="button" aria-label="Play reveal">Play</button>
+          <button id="reverse" type="button" aria-pressed="false" aria-label="Reverse reveal direction">↶</button>
+        </div>
+        <div class="reveal-timeline"><span id="revealTime">0.00</span><input id="revealScrub" type="range" min="0" max="14300" step="1" value="0" aria-label="Seek reveal in milliseconds"><span>14.3s</span></div>
+        <div class="reveal-options">
+          <label for="quality">Quality <select id="quality"><option value="low">Low effects</option><option value="medium">Medium</option><option value="high" selected>High</option></select></label>
+          <label for="revealRate">Rate <select id="revealRate"><option value="0.5">0.5×</option><option value="1" selected>1×</option><option value="1.5">1.5×</option><option value="2">2×</option></select></label>
+          <label for="revealLoop"><input id="revealLoop" type="checkbox">Loop</label>
+          <button id="heroView" class="text-button" type="button">Reset view</button>
+          <button id="returnClips" class="text-button" type="button">Return to clips</button>
+        </div>
+        <div class="sequence-progress"><div id="sequenceProgress"></div></div>
+        <div class="sequence-notes"><span><b>01 / Birth & flow</b>00—03s</span><span><b>02 / Gather & hold</b>03—10s</span><span><b>03 / Return</b>10—14s</span></div>
+      </section>
+      <details class="library">
+      <summary>Animation playground <small>20 clips + FBX import</small></summary>
+      <section class="sec" aria-labelledby="cameraHeading">
+        <h2><span id="cameraHeading">Camera choreography</span><span class="camera-state" id="cameraState">Manual</span></h2>
+        <div class="camera-moves" role="group" aria-label="Camera move">
+          <button class="camera-move" type="button" data-camera="manual" aria-pressed="true"><svg viewBox="0 0 32 20" aria-hidden="true"><rect x="8" y="5" width="16" height="12" rx="2"/><path d="m12 5 2-3h4l2 3"/><circle cx="16" cy="11" r="3"/></svg>Manual</button>
+          <button class="camera-move" type="button" data-camera="auto" aria-pressed="false"><svg viewBox="0 0 32 20" aria-hidden="true"><path d="m16 2 2.5 5.5L24 10l-5.5 2.5L16 18l-2.5-5.5L8 10l5.5-2.5Z"/><path d="M26 2v4m-2-2h4"/></svg>Auto</button>
+          <button class="camera-move" type="button" data-camera="orbit" aria-pressed="false"><svg viewBox="0 0 32 20" aria-hidden="true"><ellipse cx="16" cy="10" rx="12" ry="6"/><path d="m25 4 3 4-5 1"/><circle cx="16" cy="10" r="1"/></svg>Orbit</button>
+          <button class="camera-move" type="button" data-camera="dolly" aria-pressed="false"><svg viewBox="0 0 32 20" aria-hidden="true"><path d="M3 10h26M7 6l-4 4 4 4m18-8 4 4-4 4"/><path d="M13 4h6v12h-6z"/></svg>Push / pull</button>
+          <button class="camera-move" type="button" data-camera="sweep" aria-pressed="false"><svg viewBox="0 0 32 20" aria-hidden="true"><path d="M4 14Q16 0 28 14m-5 0h5v-5"/><circle cx="16" cy="15" r="1"/></svg>Side sweep</button>
+          <button class="camera-move" type="button" data-camera="crane" aria-pressed="false"><svg viewBox="0 0 32 20" aria-hidden="true"><path d="M6 17Q23 17 23 3m-4 4 4-4 4 4M3 17h7"/></svg>Crane</button>
+        </div>
+        <label class="opt camera-cycle" for="cameraCycle">Cycle <input id="cameraCycle" type="range" min="6" max="30" step="1" value="16" disabled><output id="cameraCycleOut" for="cameraCycle">16s</output></label>
+        <p class="camera-note" id="cameraNote">Drag to orbit and scroll to zoom. Choose a move to start choreography.</p>
+      </section>
+      <div class="sec">
+        <h2><span>Mixamo clips</span><span id="countBuilt"></span></h2>
+        <div class="grid" id="built"></div>
+      </div>
+      <div class="sec">
+        <h2><span>Your clips</span><span id="countUser"></span></h2>
+        <div class="grid" id="user"></div>
+        <label class="drop" id="drop" for="file" style="margin-top:6px">
+          <b>Add Mixamo animations</b>
+          <span>Drop .fbx files anywhere on this page, or click to choose. Each file becomes a button.</span>
+          <input id="file" type="file" accept=".fbx" multiple hidden>
+        </label>
+        <div class="msg" id="msg" role="status" aria-live="polite"></div>
+        <ul class="recipe">
+          <li>On mixamo.com pick a clip, then Download</li>
+          <li>Format FBX Binary (.fbx), 30 fps</li>
+          <li>Skin: Without Skin. Tick In Place for walks and runs</li>
+        </ul>
+      </div>
+      </details>
+      <div class="source-note">Exact CBS eye from the official website. Eye-alone reference; final artwork approval pending. <a href="assets/cbs-logo-provenance.json" target="_blank" rel="noopener">Source</a></div>
+    </aside>
+  </main>
+</div>
+<div class="fullover" id="fullover">Drop FBX to add clips</div>
+<script type="importmap">
+{
+  "imports": {
+    "three": "./vendor/three/build/three.module.js",
+    "three/addons/": "./vendor/three/examples/jsm/"
+  }
+}
+</script>
+<script type="module" src="main.js?v=smooth-particles-4"></script>
+</body>
+</html>
+

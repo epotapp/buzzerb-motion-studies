@@ -77,15 +77,11 @@
   }
 }
 
-@media (max-width: 900px) {
+@media (max-width: 700px) {
   [data-motion-study] > .motion-studies-nav {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     font-size: 11px;
-  }
-
-  .motion-studies-nav a:last-child:nth-child(8) {
-    grid-column: 1 / -1;
   }
 
   .motion-studies-label {
@@ -94,11 +90,5 @@
 
   .motion-studies-nav a {
     padding-inline: 4px;
-  }
-}
-
-@media (max-width: 599px) {
-  [data-motion-study] > .motion-studies-nav {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
